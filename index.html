@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ÉLÉGANCE | Perfume</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="brand-name">ÉLÉGANCE</div>
+    <p class="tagline">Timeless Fragrances for the Modern Soul</p>
+  </header>
+
+  <main>
+    <div class="perfume-image">
+      <img src="https://res.cloudinary.com/dfdrm0st5/image/upload/v1746037580/enhanced_ups_lluuvv.png" alt="ÉLÉGANCE Perfume Bottle" />
+    </div>
+    <button class="shop-button">Shop Now</button>
+
+    <section class="quiz-container">
+      <h2>Find Your Signature Scent</h2>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+      <form id="scent-quiz">
+        <div class="quiz-question">
+          <h3>What's your ideal weekend?</h3>
+          <div class="options">
+            <label>
+              <input type="radio" name="q1" value="floral">
+              <div class="option-card">Strolling through gardens</div>
+            </label>
+            <label>
+              <input type="radio" name="q1" value="woody">
+              <div class="option-card">Hiking in the woods</div>
+            </label>
+            <label>
+              <input type="radio" name="q1" value="fresh">
+              <div class="option-card">Beach day</div>
+            </label>
+            <label>
+              <input type="radio" name="q1" value="oriental">
+              <div class="option-card">Exploring new restaurants</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="quiz-question">
+          <h3>Your style is...</h3>
+          <div class="options">
+            <label>
+              <input type="radio" name="q2" value="floral">
+              <div class="option-card">Romantic and feminine</div>
+            </label>
+            <label>
+              <input type="radio" name="q2" value="woody">
+              <div class="option-card">Bold and edgy</div>
+            </label>
+            <label>
+              <input type="radio" name="q2" value="fresh">
+              <div class="option-card">Casual and effortless</div>
+            </label>
+            <label>
+              <input type="radio" name="q2" value="oriental">
+              <div class="option-card">Elegant and sophisticated</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="quiz-question">
+          <h3>Your favorite season is...</h3>
+          <div class="options">
+            <label>
+              <input type="radio" name="q3" value="floral">
+              <div class="option-card">Spring</div>
+            </label>
+            <label>
+              <input type="radio" name="q3" value="woody">
+              <div class="option-card">Autumn</div>
+            </label>
+            <label>
+              <input type="radio" name="q3" value="fresh">
+              <div class="option-card">Summer</div>
+            </label>
+            <label>
+              <input type="radio" name="q3" value="oriental">
+              <div class="option-card">Winter</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="quiz-question">
+          <h3>Your energy is...</h3>
+          <div class="options">
+            <label>
+              <input type="radio" name="q4" value="floral">
+              <div class="option-card">Gentle and nurturing</div>
+            </label>
+            <label>
+              <input type="radio" name="q4" value="woody">
+              <div class="option-card">Strong and grounded</div>
+            </label>
+            <label>
+              <input type="radio" name="q4" value="fresh">
+              <div class="option-card">Light and playful</div>
+            </label>
+            <label>
+              <input type="radio" name="q4" value="oriental">
+              <div class="option-card">Mysterious and intense</div>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="quiz-submit">Reveal My Scent</button>
+      </form>
+
+      <div id="quiz-result" class="hidden">
+        <div class="result-card" id="floral">
+          <div class="emoji">🌸</div>
+          <h4>Floral Grace</h4>
+          <p>Your vibe is soft, graceful, and timeless. Think rose gardens and sunlight. A true romantic.</p>
+        </div>
+        <div class="result-card" id="woody">
+          <div class="emoji">🌲</div>
+          <h4>Deep Woods</h4>
+          <p>You're bold, grounded, and powerful. Earthy, smoky notes suit your mysterious energy.</p>
+        </div>
+        <div class="result-card" id="fresh">
+          <div class="emoji">🌊</div>
+          <h4>Ocean Mist</h4>
+          <p>Clean, crisp, and full of life. Your scent reflects ease, freedom, and effortless charm.</p>
+        </div>
+        <div class="result-card" id="oriental">
+          <div class="emoji">🔥</div>
+          <h4>Spiced Elegance</h4>
+          <p>You bring warmth, mystery, and drama. Amber, vanilla, and spice are your secret weapons.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="social">
+      <a href="#" class="instagram">Instagram</a>
+    </div>
+    <div class="contact">
+      <p>hassandxb1910@gmail.com</p>
+      <p>+971 56 847 5054</p>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize quiz state
+    let currentQuestion = 1;
+    const totalQuestions = 4;
+
+    // Show first question on load
+    document.addEventListener('DOMContentLoaded', function() {
+      showQuestion(1);
+      updateProgressBar(0);
+    });
+
+    // Function to show a specific question
+    function showQuestion(questionNumber) {
+      // Hide all questions with fade out
+      document.querySelectorAll('.quiz-question').forEach(q => {
+        q.style.opacity = '0';
+        q.style.transform = 'translateX(-50px)';
+      });
+      
+      // Show the current question with fade in
+      setTimeout(() => {
+        document.querySelectorAll('.quiz-question').forEach(q => {
+          q.classList.remove('active');
+        });
+        
+        const currentQ = document.querySelector(`.quiz-question:nth-child(${questionNumber})`);
+        if (currentQ) {
+          currentQ.classList.add('active');
+          currentQ.style.opacity = '1';
+          currentQ.style.transform = 'translateX(0)';
+        }
+      }, 300);
+    }
+
+    // Function to update progress bar
+    function updateProgressBar(completedQuestions) {
+      const progressFill = document.querySelector('.progress-fill');
+      progressFill.style.width = `${(completedQuestions / totalQuestions) * 100}%`;
+    }
+
+    // Function to show result
+    function showResult() {
+      const answers = {
+        floral: 0,
+        woody: 0,
+        fresh: 0,
+        oriental: 0
+      };
+
+      for (let i = 1; i <= totalQuestions; i++) {
+        const choice = document.querySelector(`input[name="q${i}"]:checked`);
+        if (choice) {
+          answers[choice.value]++;
+        }
+      }
+
+      // Find top scent
+      let topScent = Object.keys(answers).reduce((a, b) => answers[a] > answers[b] ? a : b);
+
+      // Hide all result cards
+      document.querySelectorAll('.result-card').forEach(card => {
+        card.style.display = 'none';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+      });
+
+      // Show result container and selected card
+      document.getElementById('quiz-result').classList.remove('hidden');
+      const resultCard = document.getElementById(topScent);
+      resultCard.style.display = 'block';
+      
+      // Trigger reflow
+      resultCard.offsetHeight;
+      
+      // Add active class for animation
+      resultCard.style.opacity = '1';
+      resultCard.style.transform = 'translateY(0)';
+      
+      resultCard.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Handle radio button selection
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        const questionNumber = parseInt(this.name.replace('q', ''));
+        updateProgressBar(questionNumber);
+        
+        if (questionNumber < totalQuestions) {
+          // Move to next question after a short delay
+          setTimeout(() => {
+            currentQuestion = questionNumber + 1;
+            showQuestion(currentQuestion);
+          }, 500);
+        } else {
+          // If it's the last question, show result after a short delay
+          setTimeout(() => {
+            showResult();
+          }, 500);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
