@@ -4,20 +4,595 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ÉLÉGANCE | Perfume</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 1000;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+      margin-left: 20px;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #e74c3c;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 12px;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background-color: white;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+      z-index: 1000;
+      transition: right 0.3s ease;
+      padding: 20px;
+    }
+
+    .cart-sidebar.active {
+      right: 0;
+    }
+
+    .cart-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-items {
+      max-height: calc(100vh - 200px);
+      overflow-y: auto;
+    }
+
+    .cart-item {
+      display: flex;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .cart-item-price {
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .cart-item-quantity {
+      display: flex;
+      align-items: center;
+    }
+
+    .quantity-btn {
+      background: none;
+      border: 1px solid #ddd;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+    }
+
+    .quantity-input {
+      width: 40px;
+      text-align: center;
+      margin: 0 5px;
+      border: 1px solid #ddd;
+    }
+
+    .remove-item {
+      color: #e74c3c;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .cart-total {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-top: 1px solid #eee;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .auth-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1001;
+    }
+
+    .auth-content {
+      position: relative;
+      background-color: white;
+      margin: 15% auto;
+      padding: 30px;
+      width: 400px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .auth-content h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .close-modal {
+      position: absolute;
+      right: 20px;
+      top: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .auth-switch a {
+      color: #333;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .user-menu {
+      display: block;
+      position: relative;
+      margin-left: 20px;
+    }
+
+    .user-menu .login-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #333;
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      min-width: 160px;
+    }
+
+    .user-menu .login-btn:hover {
+      background-color: #f8f8f8;
+      transform: translateY(-1px);
+    }
+
+    .user-menu .login-btn i {
+      font-size: 18px;
+      color: #666;
+    }
+
+    .user-menu .user-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .user-menu .account-label {
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .user-menu .user-email {
+      font-size: 12px;
+      color: #666;
+      margin-top: 2px;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-menu.active .user-dropdown {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: white;
+      min-width: 180px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      padding: 8px 0;
+      margin-top: 8px;
+      z-index: 1000;
+    }
+
+    .user-dropdown a {
+      display: block;
+      padding: 10px 16px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+
+    .user-dropdown a:hover {
+      background-color: #f8f8f8;
+    }
+
+    .user-dropdown a:last-child {
+      border-top: 1px solid #eee;
+      margin-top: 4px;
+      padding-top: 12px;
+    }
+  </style>
 </head>
 <body>
+  <div class="toast" id="cart-toast">Added to Cart</div>
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <div class="auth-modal" id="signup-modal">
+    <div class="auth-content">
+      <button class="close-modal" onclick="closeSignupModal()">×</button>
+      <h2>Create an Account</h2>
+      <form id="signup-form">
+        <div class="form-group">
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" required>
+          <div class="error-message" id="email-error">Please enter a valid email</div>
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" required>
+          <div class="error-message" id="password-error">Password must be at least 6 characters</div>
+        </div>
+        <button type="submit" class="auth-btn">Sign Up</button>
+        <div class="auth-switch">
+          Already have an account? <a onclick="switchToLogin()">Log In</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="auth-modal" id="login-modal">
+    <div class="auth-content">
+      <button class="close-modal" onclick="closeLoginModal()">×</button>
+      <h2>Log In</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" required>
+          <div class="error-message" id="login-email-error">Please enter a valid email</div>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required>
+          <div class="error-message" id="login-password-error">Invalid email or password</div>
+        </div>
+        <button type="submit" class="auth-btn">Log In</button>
+        <div class="auth-switch">
+          Don't have an account? <a onclick="switchToSignup()">Sign Up</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button onclick="closeCart()" style="background: none; border: none; cursor: pointer;">×</button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <!-- Cart items will be added here dynamically -->
+    </div>
+    <div class="cart-total">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+        <span>Total:</span>
+        <span id="cart-total-price">$0.00</span>
+      </div>
+      <button class="checkout-btn">Proceed to Checkout</button>
+    </div>
+  </div>
   <header>
-    <div class="brand-name">ÉLÉGANCE</div>
-    <p class="tagline">Timeless Fragrances for the Modern Soul</p>
+    <nav>
+      <div class="brand-name">ÉLÉGANCE</div>
+      <div class="nav-links">
+        <a href="#products">Perfumes</a>
+        <a href="#glasses">Glasses</a>
+        <a href="#watches">Watches</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <div class="user-menu" id="user-menu">
+          <button class="login-btn" onclick="toggleUserMenu()">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+          </button>
+          <div class="user-dropdown">
+            <a href="#" onclick="showLoginModal()">Log In</a>
+            <a href="#" onclick="showSignupModal()">Sign Up</a>
+          </div>
+        </div>
+        <div class="cart-icon" onclick="toggleCart()">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" id="cart-count">0</span>
+        </div>
+      </div>
+    </nav>
   </header>
 
   <main>
-    <div class="perfume-image">
-      <img src="https://res.cloudinary.com/dfdrm0st5/image/upload/v1746037580/enhanced_ups_lluuvv.png" alt="ÉLÉGANCE Perfume Bottle" />
-    </div>
-    <button class="shop-button">Shop Now</button>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Unleash Your Elegance</h1>
+        <p class="tagline">Timeless Fragrances for the Modern Soul</p>
+        <button class="cta-button">Discover Your Scent</button>
+      </div>
+    </section>
+
+    <section id="products" class="featured-products">
+      <h2>Our Signature Collection</h2>
+      <div class="product-grid">
+        <div class="product-card">
+          <div class="product-image">
+            <img src="https://res.cloudinary.com/dfdrm0st5/image/upload/v1746037580/enhanced_ups_lluuvv.png" alt="ÉLÉGANCE Classic">
+            <div class="product-overlay">
+              <button class="quick-view">Quick View</button>
+            </div>
+          </div>
+          <div class="product-card-content">
+            <h3>ÉLÉGANCE Classic</h3>
+            <p class="product-description">A timeless blend of floral and woody notes</p>
+            <p class="price">$89.99</p>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <div class="product-image">
+            <img src="https://res.cloudinary.com/dfdrm0st5/image/upload/v1746120127/enhanced_c6d5a795-b2f6-4f75-bfd4-dbb07d33a923_tdikdg.png" alt="ÉLÉGANCE Noir">
+            <div class="product-overlay">
+              <button class="quick-view">Quick View</button>
+            </div>
+          </div>
+          <div class="product-card-content">
+            <h3>ÉLÉGANCE Noir</h3>
+            <p class="product-description">Dark, mysterious oriental fragrance</p>
+            <p class="price">$99.99</p>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <div class="product-image">
+            <img src="https://res.cloudinary.com/dfdrm0st5/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1746126350/742713e5-c30e-492e-b0ac-1582630cc167_uqkwo9.png" alt="ÉLÉGANCE Fresh">
+            <div class="product-overlay">
+              <button class="quick-view">Quick View</button>
+            </div>
+          </div>
+          <div class="product-card-content">
+            <h3>ÉLÉGANCE Fresh</h3>
+            <p class="product-description">Light and refreshing citrus notes</p>
+            <p class="price">$79.99</p>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="glasses" class="featured-products">
+      <h2>ÉLÉGANCE Glasses Collection</h2>
+      <div class="product-grid">
+        <div class="product-card">
+          <div class="product-image">
+            <img src="https://res.cloudinary.com/dfdrm0st5/image/upload/v1746157066/a_pair_of_luxurious_lgance_classic_glasses_resting_on_a_marble_surface_featuring_timeless_black_ace_r921j7urqxyldbohjrdp_2_bupvqh.png" alt="ÉLÉGANCE Classic Glasses">
+            <div class="product-overlay">
+              <button class="quick-view">Quick View</button>
+            </div>
+          </div>
+          <div class="product-card-content">
+            <h3>ÉLÉGANCE Classic Glasses</h3>
+            <p class="product-description">Timeless acetate frames with gold accents</p>
+            <p class="price">$199.99</p>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <div class="product-image">
+            <img src="https://res.cloudinary.com/dfdrm0st5/image/upload/v1746157288/lgance_aviator_sunglasses_placed_on_a_reflective_black_glass_surface_classic_silver_metal_frames_wi_teona896j4ieit2bq9a6_1_fhhsj2.png" alt="ÉLÉGANCE Aviator">
+            <div class="product-overlay">
+              <button class="quick-view">Quick View</button>
+            </div>
+          </div>
+          <div class="product-card-content">
+            <h3>ÉLÉGANCE Aviator</h3>
+            <p class="product-description">Classic metal frames with polarized lenses</p>
+            <p class="price">$179.99</p>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="watches" class="featured-products">
+      <h2>ÉLÉGANCE Watches Collection</h2>
+      <div class="product-grid">
+        <div class="product-card">
+          <div class="product-image">
+            <img src="https://res.cloudinary.com/dfdrm0st5/image/upload/v1746157504/lgance_chronograph_luxury_watch_displayed_on_a_dark_walnut_wood_surface_featuring_a_polished_stainl_0f6dpy951oogp73sfvum_2_d83oop.png" alt="ÉLÉGANCE Chronograph">
+            <div class="product-overlay">
+              <button class="quick-view">Quick View</button>
+            </div>
+          </div>
+          <div class="product-card-content">
+            <h3>ÉLÉGANCE Chronograph</h3>
+            <p class="product-description">Luxury automatic watch with leather strap</p>
+            <p class="price">$299.99</p>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <div class="product-image">
+            <img src="https://res.cloudinary.com/dfdrm0st5/image/upload/v1746157753/lgance_minimalist_watch_displayed_on_a_smooth_concrete_slab_with_cool_ambient_lighting_sleek_silver_urlcm598rsvqz9vn3mct_3_vkl1ee.png" alt="ÉLÉGANCE Minimalist">
+            <div class="product-overlay">
+              <button class="quick-view">Quick View</button>
+            </div>
+          </div>
+          <div class="product-card-content">
+            <h3>ÉLÉGANCE Minimalist</h3>
+            <p class="product-description">Sleek stainless steel watch with mesh band</p>
+            <p class="price">$249.99</p>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <h2>What Our Customers Say</h2>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <div class="rating">★★★★★</div>
+          <p>"The most elegant fragrance I've ever worn. Lasts all day!"</p>
+          <p class="customer">- Sarah M.</p>
+        </div>
+        <div class="testimonial-card">
+          <div class="rating">★★★★★</div>
+          <p>"Absolutely love the Noir scent. Perfect for evening events."</p>
+          <p class="customer">- James L.</p>
+        </div>
+        <div class="testimonial-card">
+          <div class="rating">★★★★★</div>
+          <p>"The Fresh scent is my daily go-to. Light and perfect for work."</p>
+          <p class="customer">- Emma R.</p>
+        </div>
+      </div>
+    </section>
 
     <section class="quiz-container">
       <h2>Find Your Signature Scent</h2>
@@ -142,12 +717,56 @@
   </main>
 
   <footer>
-    <div class="social">
-      <a href="#" class="instagram">Instagram</a>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#products">All Products</a></li>
+          <li><a href="#new">New Arrivals</a></li>
+          <li><a href="#best">Best Sellers</a></li>
+          <li><a href="#gifts">Gift Sets</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>About</h4>
+        <ul>
+          <li><a href="#story">Our Story</a></li>
+          <li><a href="#sustainability">Sustainability</a></li>
+          <li><a href="#careers">Careers</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Customer Service</h4>
+        <ul>
+          <li><a href="#contact">Contact Us</a></li>
+          <li><a href="#shipping">Shipping & Returns</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Connect With Us</h4>
+        <div class="social-links">
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-pinterest"></i></a>
+        </div>
+        <div class="contact-info">
+          <p><i class="fas fa-envelope"></i> hassandxb1910@gmail.com</p>
+          <p><i class="fas fa-phone"></i> +971 56 847 5054</p>
+        </div>
+      </div>
     </div>
-    <div class="contact">
-      <p>hassandxb1910@gmail.com</p>
-      <p>+971 56 847 5054</p>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2024 ÉLÉGANCE. All rights reserved.</p>
+      <div class="legal-links">
+        <a href="#privacy">Privacy Policy</a>
+        <a href="#terms">Terms of Service</a>
+      </div>
     </div>
   </footer>
 
@@ -252,6 +871,302 @@
         }
       });
     });
+
+    // Add smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Add hover effects for product cards
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.querySelector('.product-overlay').style.opacity = '1';
+      });
+      card.addEventListener('mouseleave', function() {
+        this.querySelector('.product-overlay').style.opacity = '0';
+      });
+    });
+
+    // Cart functionality
+    let cart = [];
+    const cartItems = document.getElementById('cart-items');
+    const cartCount = document.getElementById('cart-count');
+    const cartTotal = document.getElementById('cart-total-price');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const cartOverlay = document.getElementById('cart-overlay');
+
+    function toggleCart() {
+      cartSidebar.classList.toggle('active');
+      cartOverlay.style.display = cartOverlay.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function closeCart() {
+      cartSidebar.classList.remove('active');
+      cartOverlay.style.display = 'none';
+    }
+
+    function updateCart() {
+      cartItems.innerHTML = '';
+      let total = 0;
+      
+      cart.forEach((item, index) => {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-item-details">
+            <div class="cart-item-title">${item.name}</div>
+            <div class="cart-item-price">$${item.price}</div>
+            <div class="cart-item-quantity">
+              <button class="quantity-btn" onclick="updateQuantity(${index}, ${item.quantity - 1})">-</button>
+              <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)">
+              <button class="quantity-btn" onclick="updateQuantity(${index}, ${item.quantity + 1})">+</button>
+              <span class="remove-item" onclick="removeItem(${index})">Remove</span>
+            </div>
+          </div>
+        `;
+        cartItems.appendChild(cartItem);
+        total += item.price * item.quantity;
+      });
+
+      cartCount.textContent = cart.length;
+      cartTotal.textContent = `$${total.toFixed(2)}`;
+    }
+
+    function addToCart(name, price, image) {
+      const existingItem = cart.find(item => item.name === name);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          name,
+          price,
+          image,
+          quantity: 1
+        });
+      }
+
+      updateCart();
+      showToast();
+    }
+
+    function updateQuantity(index, newQuantity) {
+      if (newQuantity < 1) return;
+      cart[index].quantity = parseInt(newQuantity);
+      updateCart();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function showToast() {
+      const toast = document.getElementById('cart-toast');
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // Auth functionality
+    const signupModal = document.getElementById('signup-modal');
+    const loginModal = document.getElementById('login-modal');
+    const signupForm = document.getElementById('signup-form');
+    const loginForm = document.getElementById('login-form');
+    const userMenu = document.getElementById('user-menu');
+    let isSignedIn = false;
+    let currentUserEmail = '';
+
+    function showSignupModal() {
+      signupModal.style.display = 'block';
+      loginModal.style.display = 'none';
+    }
+
+    function showLoginModal() {
+      loginModal.style.display = 'block';
+      signupModal.style.display = 'none';
+    }
+
+    function closeSignupModal() {
+      signupModal.style.display = 'none';
+    }
+
+    function closeLoginModal() {
+      loginModal.style.display = 'none';
+    }
+
+    function switchToLogin() {
+      closeSignupModal();
+      showLoginModal();
+    }
+
+    function switchToSignup() {
+      closeLoginModal();
+      showSignupModal();
+    }
+
+    function toggleUserMenu() {
+      userMenu.classList.toggle('active');
+    }
+
+    // Close user menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!userMenu.contains(e.target)) {
+        userMenu.classList.remove('active');
+      }
+    });
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function validatePassword(password) {
+      return password.length >= 6;
+    }
+
+    function updateUserMenu(email) {
+      userMenu.innerHTML = `
+        <button class="login-btn" onclick="toggleUserMenu()">
+          <i class="fas fa-user"></i>
+          <div class="user-info">
+            <span class="account-label">Account</span>
+            <div class="user-email">${email}</div>
+          </div>
+        </button>
+        <div class="user-dropdown">
+          <a href="#" onclick="logout()">Log Out</a>
+        </div>
+      `;
+    }
+
+    signupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const emailError = document.getElementById('email-error');
+      const passwordError = document.getElementById('password-error');
+      
+      let isValid = true;
+      
+      if (!validateEmail(email)) {
+        emailError.style.display = 'block';
+        isValid = false;
+      } else {
+        emailError.style.display = 'none';
+      }
+      
+      if (!validatePassword(password)) {
+        passwordError.style.display = 'block';
+        isValid = false;
+      } else {
+        passwordError.style.display = 'none';
+      }
+      
+      if (isValid) {
+        isSignedIn = true;
+        currentUserEmail = email;
+        closeSignupModal();
+        updateUserMenu(email);
+        // Add the item to cart that was attempted to be added
+        if (pendingCartItem) {
+          addToCart(pendingCartItem.name, pendingCartItem.price, pendingCartItem.image);
+          pendingCartItem = null;
+        }
+      }
+    });
+
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const emailError = document.getElementById('login-email-error');
+      const passwordError = document.getElementById('login-password-error');
+      
+      let isValid = true;
+      
+      if (!validateEmail(email)) {
+        emailError.style.display = 'block';
+        isValid = false;
+      } else {
+        emailError.style.display = 'none';
+      }
+      
+      if (isValid) {
+        isSignedIn = true;
+        currentUserEmail = email;
+        closeLoginModal();
+        updateUserMenu(email);
+        // Add the item to cart that was attempted to be added
+        if (pendingCartItem) {
+          addToCart(pendingCartItem.name, pendingCartItem.price, pendingCartItem.image);
+          pendingCartItem = null;
+        }
+      }
+    });
+
+    function logout() {
+      isSignedIn = false;
+      currentUserEmail = '';
+      userMenu.innerHTML = `
+        <button class="login-btn" onclick="toggleUserMenu()">
+          <i class="fas fa-user"></i>
+          <div class="user-info">
+            <span class="account-label">Account</span>
+          </div>
+        </button>
+        <div class="user-dropdown">
+          <a href="#" onclick="showLoginModal()">Log In</a>
+          <a href="#" onclick="showSignupModal()">Sign Up</a>
+        </div>
+      `;
+    }
+
+    // Close modals when clicking outside
+    window.addEventListener('click', function(e) {
+      if (e.target === signupModal) {
+        closeSignupModal();
+      }
+      if (e.target === loginModal) {
+        closeLoginModal();
+      }
+    });
+
+    let pendingCartItem = null;
+
+    // Update add to cart buttons
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', function() {
+        if (!isSignedIn) {
+          const productCard = this.closest('.product-card');
+          pendingCartItem = {
+            name: productCard.querySelector('h3').textContent,
+            price: parseFloat(productCard.querySelector('.price').textContent.replace('$', '')),
+            image: productCard.querySelector('img').src
+          };
+          showSignupModal();
+        } else {
+          const productCard = this.closest('.product-card');
+          const name = productCard.querySelector('h3').textContent;
+          const price = parseFloat(productCard.querySelector('.price').textContent.replace('$', ''));
+          const image = productCard.querySelector('img').src;
+          
+          addToCart(name, price, image);
+        }
+      });
+    });
+
+    // Close cart when clicking overlay
+    cartOverlay.addEventListener('click', closeCart);
   </script>
 </body>
 </html>
